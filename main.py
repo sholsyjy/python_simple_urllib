@@ -23,7 +23,7 @@ if not os.path.exists(path):
 def isWanted(news):
   return news.__contains__("2018.02") or news.__contains__("2018.03") or news.__contains__("2018.04") or news.__contains__("2018.05") or news.__contains__("2018.06")
 
-for i in range(12711, max_num):
+for i in range(13022, max_num):
   res = urllib2.urlopen(url_begin+str(i)+url_end)
   print "page "+str(i), res.getcode()
   soup = BeautifulSoup(res.read(), "html.parser", from_encoding="unicode")
@@ -41,21 +41,22 @@ for i in range(12711, max_num):
           page_title += unicode(html)
       date = news[0].find(string=re.compile("2018[.]0[0-9][.][0-9]{2}")).split(" ")[0].split("\n")[-1]
       time = news[0].find(string=re.compile("2018[.]0[0-9][.][0-9]{2}")).split(" ")[-1].split("\n")[0]
-      page_res = urllib2.urlopen(page_url)
-      print "page inside", index, page_res.getcode(), date, time, page_title
-      page_soup = BeautifulSoup(page_res.read(), "html.parser", from_encoding="unicode")
-      contents_div = page_soup.find("div", class_="article-t")
-      if type(contents_div) is type(None):
-        continue
-      contents = contents_div.find_all("p")
       try:
+        page_res = urllib2.urlopen(page_url)
+        print "page inside", index, page_res.getcode(), date, time, page_title
+        page_soup = BeautifulSoup(page_res.read(), "html.parser", from_encoding="unicode")
+        contents_div = page_soup.find("div", class_="article-t")
+        if type(contents_div) is type(None):
+          continue
+        contents = contents_div.find_all("p")
+      
         filename = path + date + '_' + time + '_' + page_title + '.txt'
         fo = open(filename, 'w')
         fo.write(unicode(page_url).encode("utf-8") + "\n")
         for content in contents:
           fo.write(unicode(content.contents[0]).encode("utf-8") + "\n")
         fo.close()
-      except IOError, Argument:
+      except (IOError, urllib2.HTTPError), Argument:
         print Argument
         fo.close()
 
