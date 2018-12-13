@@ -4,10 +4,17 @@ import numpy as np
 from bs4 import BeautifulSoup, Tag
 import re
 import os
+import httplib
+
+'''
+this is an unkown bug with HTTP/1.0 and HTTP/1.1
+'''
+httplib.HTTPConnection._http_vsn = 10
+httplib.HTTPConnection._http_vsn_str = "HTTP/1.0"
 
 url_begin = "http://search.cs.com.cn/search?page="
 url_end = "&channelid=215308&searchword=A%E8%82%A1&keyword=A%E8%82%A1&token=12.1462412070719.47&perpage=10&outlinepage=5&&andsen=&total=&orsen=&exclude=&searchscope=&timescope=&timescopecolumn=&orderby=&timeline==2018.07"
-max_num = 13497
+max_num = 13726
 path = "./news/"
 
 if not os.path.exists(path):
@@ -16,7 +23,7 @@ if not os.path.exists(path):
 def isWanted(news):
   return news.__contains__("2018.02") or news.__contains__("2018.03") or news.__contains__("2018.04") or news.__contains__("2018.05") or news.__contains__("2018.06")
 
-for i in range(1, max_num):
+for i in range(12711, max_num):
   res = urllib2.urlopen(url_begin+str(i)+url_end)
   print "page "+str(i), res.getcode()
   soup = BeautifulSoup(res.read(), "html.parser", from_encoding="unicode")
